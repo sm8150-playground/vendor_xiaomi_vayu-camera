@@ -1,0 +1,47 @@
+# All blobs from vayu_global-user 13 RKQ1.200826.002 V14.0.3.0.TJUMIXM release-keys unless pinned
+
+# MiuiCamera
+product/priv-app/MiuiCamera/MiuiCamera.apk:system/priv-app/MiuiCamera/MiuiCamera.apk;OVERRIDES=Aperture,Snap,Camera2,GoogleCameraGo
+
+# Camera shims
+system/lib64/libcamera_algoup_jni.xiaomi.so
+system/lib64/libcamera_mianode_jni.xiaomi.so
+system/lib64/libmicampostproc_client.so
+system/lib64/vendor.xiaomi.hardware.campostproc@1.0.so
+vendor/lib64/libSNPE.so:system/lib64/libSNPE.so;MODULE_SUFFIX=_vayu_camera;DISABLE_DEPS
+
+# Misys
+system/etc/permissions/vendor.xiaomi.hardware.misys-V1.0-java-permission.xml
+system/etc/permissions/vendor.xiaomi.hardware.misys-V2.0-java-permission.xml
+system/etc/permissions/vendor.xiaomi.hardware.misys-V4.0-java-permission.xml
+system/etc/permissions/vendor.xiaomi.hardware.misys.V3_0-permission.xml
+system/framework/vendor.xiaomi.hardware.misys-V1.0-java.jar
+system/framework/vendor.xiaomi.hardware.misys-V2.0-java.jar
+system/framework/vendor.xiaomi.hardware.misys-V4.0-java.jar
+system/framework/vendor.xiaomi.hardware.misys.V3_0.jar
+vendor/bin/hw/vendor.xiaomi.hardware.misys@1.0-service
+vendor/bin/hw/vendor.xiaomi.hardware.misys@2.0-service
+vendor/bin/hw/vendor.xiaomi.hardware.misys@3.0-service
+vendor/bin/hw/vendor.xiaomi.hardware.misys@4.0-service
+vendor/etc/init/vendor.xiaomi.hardware.misys@1.0-service.rc
+vendor/etc/init/vendor.xiaomi.hardware.misys@2.0-service.rc
+vendor/etc/init/vendor.xiaomi.hardware.misys@3.0-service.rc
+vendor/etc/init/vendor.xiaomi.hardware.misys@4.0-service.rc
+vendor/etc/vintf/manifest/vendor.xiaomi.hardware.misys@1.0.xml
+vendor/etc/vintf/manifest/vendor.xiaomi.hardware.misys@2.0.xml
+vendor/etc/vintf/manifest/vendor.xiaomi.hardware.misys@3.0.xml
+vendor/etc/vintf/manifest/vendor.xiaomi.hardware.misys@4.0.xml
+vendor/lib64/hw/vendor.xiaomi.hardware.misys@1.0-impl.so
+vendor/lib64/hw/vendor.xiaomi.hardware.misys@2.0-impl.so
+vendor/lib64/hw/vendor.xiaomi.hardware.misys@3.0-impl.so
+vendor/lib64/hw/vendor.xiaomi.hardware.misys@4.0-impl.so
+vendor/lib64/libcheckpid.so
+vendor/lib64/liblogwrap_vendor.so
+vendor/lib64/vendor.xiaomi.hardware.misys@1.0.so
+vendor/lib64/vendor.xiaomi.hardware.misys@2.0.so
+vendor/lib64/vendor.xiaomi.hardware.misys@3.0.so
+vendor/lib64/vendor.xiaomi.hardware.misys@4.0.so
+
+# MIUI camera algo libs (patched)
+vendor/lib64/libcamera_dirty.so|811911480172e89a75c59fa3ad7ec43ef357f1dd
+vendor/lib64/libmialgoengine.so|c297c6c07f41ce86f6e461256d9156db28a45f79

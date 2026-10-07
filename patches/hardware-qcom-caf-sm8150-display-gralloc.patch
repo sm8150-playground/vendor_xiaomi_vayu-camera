@@ -1,0 +1,37 @@
+diff --git a/gralloc/gr_utils.cpp b/gralloc/gr_utils.cpp
+index 5aafabbe..87c4beb5 100644
+--- a/gralloc/gr_utils.cpp
++++ b/gralloc/gr_utils.cpp
+@@ -767,6 +767,11 @@ bool IsUBwcEnabled(int format, uint64_t usage) {
+     return true;
+   }
+ 
++  if (usage & BufferUsage::VIDEO_ENCODER) {
++    return false;
++  }
++
+   // Allow UBWC, if an OpenGL client sets UBWC usage flag and GPU plus MDP
+   // support the format. OR if a non-OpenGL client like Rotator, sets UBWC
+   // usage flag and MDP supports the format.
+@@ -1361,10 +1366,7 @@ int GetImplDefinedFormat(uint64_t usage, int format) {
+   // the usage bits, gralloc assigns a format.
+   if (format == HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED ||
+       format == HAL_PIXEL_FORMAT_YCbCr_420_888) {
+-    if ((usage & GRALLOC_USAGE_PRIVATE_ALLOC_UBWC || usage & GRALLOC_USAGE_PRIVATE_ALLOC_UBWC_PI)
+-        && format != HAL_PIXEL_FORMAT_YCbCr_420_888) {
+-      gr_format = HAL_PIXEL_FORMAT_YCbCr_420_SP_VENUS_UBWC;
+-    } else if (usage & BufferUsage::VIDEO_ENCODER) {
++    if (usage & BufferUsage::VIDEO_ENCODER) {
+       if (usage & GRALLOC_USAGE_PRIVATE_VIDEO_NV21_ENCODER) {
+         gr_format = HAL_PIXEL_FORMAT_NV21_ENCODEABLE;  // NV21
+       } else if (usage & GRALLOC_USAGE_PRIVATE_HEIF) {
+@@ -1374,6 +1376,9 @@ int GetImplDefinedFormat(uint64_t usage, int format) {
+       } else {
+         gr_format = HAL_PIXEL_FORMAT_NV12_ENCODEABLE;  // NV12
+       }
++    } else if ((usage & GRALLOC_USAGE_PRIVATE_ALLOC_UBWC || usage & GRALLOC_USAGE_PRIVATE_ALLOC_UBWC_PI)
++        && format != HAL_PIXEL_FORMAT_YCbCr_420_888) {
++      gr_format = HAL_PIXEL_FORMAT_YCbCr_420_SP_VENUS_UBWC;
+     } else if (usage & BufferUsage::CAMERA_INPUT) {
+       if (usage & BufferUsage::CAMERA_OUTPUT) {
+         // Assumed ZSL if both producer and consumer camera flags set

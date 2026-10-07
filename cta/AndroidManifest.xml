@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.miui.securitycenter">
+
+    <application android:label="Security">
+        <activity
+            android:name=".CtaActivity"
+            android:exported="true"
+            android:theme="@android:style/Theme.NoDisplay">
+            <intent-filter>
+                <action android:name="miui.intent.action.SYSTEM_PERMISSION_DECLARE" />
+                <action android:name="miui.intent.action.SYSTEM_PERMISSION_DECLARE_NEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

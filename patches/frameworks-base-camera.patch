@@ -1,0 +1,110 @@
+diff --git a/core/java/android/hardware/Camera.java b/core/java/android/hardware/Camera.java
+index ea75c0d8dca5..d62b0dc8b12e 100644
+--- a/core/java/android/hardware/Camera.java
++++ b/core/java/android/hardware/Camera.java
+@@ -32,6 +32,7 @@ import android.annotation.SuppressLint;
+ import android.annotation.TestApi;
+ import android.app.ActivityThread;
+ import android.app.AppOpsManager;
++import android.app.Application;
+ import android.companion.virtual.VirtualDeviceManager;
+ import android.compat.annotation.UnsupportedAppUsage;
+ import android.content.AttributionSource.ScopedParcelState;
+@@ -302,11 +303,14 @@ public class Camera {
+                 SystemProperties.get("vendor.camera.aux.packageblacklist", "").split(",")));
+ 
+         // Append packages from resources
+-        Resources res = ActivityThread.currentApplication().getResources();
+-        packageList.addAll(Arrays.asList(res.getStringArray(
+-                com.android.internal.R.array.config_cameraAuxPackageAllowList)));
+-        packageBlacklist.addAll(Arrays.asList(res.getStringArray(
+-                com.android.internal.R.array.config_cameraAuxPackageBlackList)));
++        Application application = ActivityThread.currentApplication();
++        if (application != null) {
++            Resources res = application.getResources();
++            packageList.addAll(Arrays.asList(res.getStringArray(
++                    com.android.internal.R.array.config_cameraAuxPackageAllowList)));
++            packageBlacklist.addAll(Arrays.asList(res.getStringArray(
++                    com.android.internal.R.array.config_cameraAuxPackageBlackList)));
++        }
+ 
+         return (packageList.isEmpty() || packageList.contains(packageName)) && !packageBlacklist.contains(packageName);
+     }
+diff --git a/core/java/android/hardware/camera2/CameraManager.java b/core/java/android/hardware/camera2/CameraManager.java
+index d619cd70007d..f5356299e20d 100644
+--- a/core/java/android/hardware/camera2/CameraManager.java
++++ b/core/java/android/hardware/camera2/CameraManager.java
+@@ -2404,6 +2404,11 @@ public final class CameraManager {
+                         Thread.currentThread().getId(), mDeviceStatus.size()));
+ 
+                 CameraStatus[] cameraStatuses = cameraService.addListener(this);
++
++                mCameraService = cameraService;
++
+                 for (CameraStatus cameraStatus : cameraStatuses) {
+                     DeviceCameraInfo info = new DeviceCameraInfo(cameraStatus.cameraId,
+                             cameraStatus.deviceId);
+@@ -2424,14 +2429,18 @@ public final class CameraManager {
+                         onCameraOpenedLocked(info, cameraStatus.clientPackage);
+                     }
+                 }
+-                mCameraService = cameraService;
+-
+                 addDeviceStatusHistoryLocked(TextUtils.formatSimple(
+                         "connectCameraServiceLocked(X): tid(%d): mDeviceStatus size %d",
+                         Thread.currentThread().getId(), mDeviceStatus.size()));
+             } catch (ServiceSpecificException e) {
+-                // Unexpected failure
+-                throw new IllegalStateException("Failed to register a camera service listener", e);
++                if (e.errorCode == ICameraService.ERROR_ALREADY_EXISTS) {
++                    mCameraService = cameraService;
++                } else {
++                    throw new IllegalStateException(
++                            "Failed to register a camera service listener", e);
++                }
+             } catch (RemoteException e) {
+                 // Camera service is now down, leave mCameraService as null
+             }
+diff --git a/core/java/android/hardware/camera2/params/StreamConfigurationMap.java b/core/java/android/hardware/camera2/params/StreamConfigurationMap.java
+index f94c4a930ec4..909833c151d7 100644
+--- a/core/java/android/hardware/camera2/params/StreamConfigurationMap.java
++++ b/core/java/android/hardware/camera2/params/StreamConfigurationMap.java
+@@ -73,6 +73,40 @@ public final class StreamConfigurationMap {
+ 
+     private static final int MAX_DIMEN_FOR_ROUNDING = 1920; // maximum allowed width for rounding
+ 
++    /**
++     *
++     * @hide
++     */
++    public StreamConfigurationMap(
++            StreamConfiguration[] configurations,
++            StreamConfigurationDuration[] minFrameDurations,
++            StreamConfigurationDuration[] stallDurations,
++            StreamConfiguration[] depthConfigurations,
++            StreamConfigurationDuration[] depthMinFrameDurations,
++            StreamConfigurationDuration[] depthStallDurations,
++            StreamConfiguration[] dynamicDepthConfigurations,
++            StreamConfigurationDuration[] dynamicDepthMinFrameDurations,
++            StreamConfigurationDuration[] dynamicDepthStallDurations,
++            StreamConfiguration[] heicConfigurations,
++            StreamConfigurationDuration[] heicMinFrameDurations,
++            StreamConfigurationDuration[] heicStallDurations,
++            HighSpeedVideoConfiguration[] highSpeedVideoConfigurations,
++            ReprocessFormatsMap inputOutputFormatsMap,
++            boolean listHighResolution) {
++        this(configurations, minFrameDurations, stallDurations,
++                depthConfigurations, depthMinFrameDurations, depthStallDurations,
++                dynamicDepthConfigurations, dynamicDepthMinFrameDurations,
++                dynamicDepthStallDurations,
++                heicConfigurations, heicMinFrameDurations, heicStallDurations,
++                /*jpegRConfigurations*/ null, /*jpegRMinFrameDurations*/ null,
++                /*jpegRStallDurations*/ null,
++                /*heicUltraHDRConfigurations*/ null, /*heicUltraHDRMinFrameDurations*/ null,
++                /*heicUltraHDRStallDurations*/ null,
++                highSpeedVideoConfigurations, inputOutputFormatsMap, listHighResolution);
++    }
++
+     /**
+      * Create a new {@link StreamConfigurationMap}.
+      *

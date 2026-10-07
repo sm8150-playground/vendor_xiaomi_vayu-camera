@@ -1,0 +1,28 @@
+diff --git a/services/camera/libcameraservice/api2/CameraDeviceClient.cpp b/services/camera/libcameraservice/api2/CameraDeviceClient.cpp
+index d0ebd02307..a989282eb3 100644
+--- a/services/camera/libcameraservice/api2/CameraDeviceClient.cpp
++++ b/services/camera/libcameraservice/api2/CameraDeviceClient.cpp
+@@ -2258,7 +2258,8 @@ binder::Status CameraDeviceClient::finalizeOutputConfigurations(int32_t streamId
+                 outSurface, flagtools::convertParcelableSurfaceTypeToSurface(surface),
+                 mCameraIdStr, mDevice->info(), mDevice->infoPhysical(physicalId),
+                 sensorPixelModesUsed, dynamicRangeProfile, streamUseCase, timestampBase,
+-                mirrorMode, colorSpace, /*respectSurfaceSize*/ false, multiResMode);
++                mirrorMode, colorSpace, /*respectSurfaceSize*/ false, multiResMode,
++                mPrivilegedClient);
+ 
+         if (!res.isOk()) return res;
+ 
+diff --git a/services/camera/libcameraservice/utils/SessionConfigurationUtils.cpp b/services/camera/libcameraservice/utils/SessionConfigurationUtils.cpp
+index e86e56dff3..31247d4fc3 100644
+--- a/services/camera/libcameraservice/utils/SessionConfigurationUtils.cpp
++++ b/services/camera/libcameraservice/utils/SessionConfigurationUtils.cpp
+@@ -239,7 +239,8 @@ bool roundBufferDimensionNearest(int32_t width, int32_t height,
+     // requirement. AIDE2 is vendor enhanced feature which requires special resolutions and
+     // those are not populated in static capabilities.
+     if (isPriviledgedClient == true &&
+-            (format == HAL_PIXEL_FORMAT_YCbCr_420_888 || format == HAL_PIXEL_FORMAT_BLOB)) {
++            (format == HAL_PIXEL_FORMAT_YCbCr_420_888 || format == HAL_PIXEL_FORMAT_BLOB ||
++             format == HAL_PIXEL_FORMAT_IMPLEMENTATION_DEFINED)) {
+         ALOGI("Bypass roundBufferDimensionNearest for privilegedClient YUV streams "
+                 "width %d height %d for format %d", width, height, format);
+ 
